@@ -7,33 +7,68 @@
 import SwiftUI
 
 struct ContentView: View {
-    init() {print("Hi")}
-    @State public var name = "Something"
+    
+    // View variables
+    //
+    @State public var contract = prefs.contract
+    @State public var delaySec = String(prefs.delaySec)
+    @State public var pngUrl = prefs.pngUrl
+    @State public var ticker = prefs.ticker
+    @State public var autostart = prefs.autostart
+    @State public var message = ""
+    //
+    // View variables
+    
     var body: some View {
-        Label("Contract Address:", systemImage: "folder.circle")
-        TextField("Shout your name at me", text: $name)
+        
+        Text("Contract Address:")
+        
+        TextField("String", text: $contract, onCommit: {
+            print("commit")
+        })
                     .textFieldStyle(.roundedBorder)
                     .textCase(.uppercase)
                     .padding(.horizontal)
-        Label("PNG Url:", systemImage: "folder.circle")
-        TextField("Shout your name at me", text: $name)
+
+        Text("Ticker PNG Url:")
+        
+        TextField("Url", text: $pngUrl, onCommit: {
+            
+        })
                     .textFieldStyle(.roundedBorder)
                     .textCase(.uppercase)
                     .padding(.horizontal)
         
-        Label("Coin Ticker:", systemImage: "folder.circle")
-        TextField("Shout your name at me", text: $name)
+        Text("Coin Ticker:")
+        
+        TextField("Ticker", text: $ticker, onCommit: {
+            
+        })
                     .textFieldStyle(.roundedBorder)
                     .textCase(.uppercase)
                     .padding(.horizontal)
         
-        Label("Delay in seconds:", systemImage: "folder.circle")
-        TextField("Shout your name at me", text: $name)
+        Text("Delay in seconds:")
+        
+        TextField("Secs", text: $delaySec, onCommit: {
+            
+        })
                     .textFieldStyle(.roundedBorder)
                     .textCase(.uppercase)
                     .padding(.horizontal)
+        
+        Toggle(isOn: $autostart) {
+                Text("Start with system")
+            }
         
         Button("Save changes") {
+            let (answer, text) = check_data()
+            if (answer) {
+                
+            }
+            else {
+                
+            }
             print("Button tapped!")
         }
     }

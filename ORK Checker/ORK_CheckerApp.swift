@@ -11,10 +11,11 @@ import AppKit
 //
 let API = "https://api.pancakeswap.info/api/v2/tokens/"
 let contractDefault = "0xCed0CE92F4bdC3c2201E255FAF12f05cf8206dA8"
-let delaySecDefault = 30.0
+let delaySecDefault = 10.0
 let pngUrlDefault = "orakuru.png"
 let nameDefault = "ORK"
 let autostartDefault = true
+let isFirstLaunchDefault = false
 //
 // DEFAULT PREFERENCES
 
@@ -22,7 +23,7 @@ let autostartDefault = true
 //
 var statusItem: NSStatusItem?
 var statusBar : NSStatusBar?
-//var menu : NSMenu?
+var timer : Timer?
 //
 // GLOBAL OBJECTS
 
@@ -42,14 +43,16 @@ struct Preferences {
     var contract : String
     var delaySec : Double
     var pngUrl : String
-    var name : String
+    var ticker : String
     var autostart : Bool
+    var isFirstLaunch : Bool
     init() {
         self.contract = contractDefault
         self.delaySec = delaySecDefault
         self.pngUrl = pngUrlDefault
-        self.name = nameDefault
+        self.ticker = nameDefault
         self.autostart = autostartDefault
+        self.isFirstLaunch = isFirstLaunchDefault
     }
 }
 //
@@ -77,9 +80,12 @@ func get_price() {
         ans.error = error
         // DEBUG
         print(String(data: json_data, encoding: .utf8)!)
+        DispatchQueue.main.async {
+            display_data(err: err)
+        }
     }
     task.resume()
-    display_data(err: err)
+    
 }
 
 func save_prefs() {
@@ -87,19 +93,21 @@ func save_prefs() {
     defaults.set(true, forKey: "delaySec")
     defaults.set(CGFloat.pi, forKey: "pngUrl")
     defaults.set("Paul Hudson", forKey: "name")
-    defaults.set(Date(), forKey: "autostart")
+    defaults.set(true, forKey: "autostart")
 }
 
 func load_prefs() {
     prefs.contract = defaults.string(forKey: "contract") ?? contractDefault
-    prefs.delaySec = defaults.double(forKey: "delaySec")
+    let delaySec = defaults.double(forKey: "delaySec")
+    if (delaySec == 0) {
+        prefs.delaySec = delaySecDefault
+    }
     prefs.pngUrl = defaults.string(forKey: "pngUrl") ?? pngUrlDefault
-    prefs.name = defaults.string(forKey: "name") ?? nameDefault
+    prefs.ticker = defaults.string(forKey: "name") ?? nameDefault
     prefs.autostart = defaults.bool(forKey: "autostart")
 }
 
 func display_data(err: Bool) {
-    statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     if (err == true) {
         statusItem?.button?.title = "Internet Error"
         return
@@ -117,7 +125,7 @@ func display_data(err: Bool) {
                 icon?.isTemplate = true
                 statusItem?.button?.imagePosition = NSControl.ImagePosition.imageLeft
                 statusItem?.button?.image = icon
-                statusItem?.button?.title = " " + prefs.name + " $" + String(_price_)
+                statusItem?.button?.title = " " + prefs.ticker + " $" + String(_price_)
             
                 // Building menu
                 let menu = NSMenu()
@@ -126,22 +134,36 @@ func display_data(err: Bool) {
                 menu.addItem(NSMenuItem.separator())
                 menu.addItem(NSMenuItem(title: "Quit", action: Selector("terminate:"), keyEquivalent: "q"))
                 statusItem?.menu = menu
-            NSApp.setActivationPolicy(.accessory)
+                
                 }
     }
 }
 
-
-
-
 func infinity_loop(time: Double) {
-    Timer.scheduledTimer(withTimeInterval: time, repeats: true) { (t) in
-        let _: () = get_price()
+    get_price()
+    timer = Timer.scheduledTimer(withTimeInterval: time, repeats: true) { (t) in
+        get_price()
     }
+}
+
+class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+
+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        NSApp.setActivationPolicy(.accessory)
+        statusItem?.button?.title = "Loading price"
+        statusItem?.button?.font = NSFont.systemFont(ofSize: 13)
+    }
+}
+
+func check_data() -> (Bool, String) {
+    
+    return (true, "1")
 }
 
 @main
 struct ORK_CheckerApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     var body: some Scene {
         WindowGroup {
             ContentView()
