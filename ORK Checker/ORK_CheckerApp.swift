@@ -7,18 +7,18 @@
 import SwiftUI
 import AppKit
 
-/// Magical values
+/// MAGICAL VALUES
 let menuBarFontSize = 13
 let iconSize = 16
 let precisionRound : Float = 3
-///
+/// MAGICAL VALUES
 
 
 /// DEFAULT PREFERENCES
 let API = "https://api.pancakeswap.info/api/v2/tokens/"
 let contractDefault = "0xCed0CE92F4bdC3c2201E255FAF12f05cf8206dA8"
 let delaySecDefault = 10.0
-let pngUrlDefault = "orakuru.png"
+let pngUrlDefault = "orakuru"
 let nameDefault = "ORK"
 let autostartDefault = true
 let isFirstLaunchDefault = true
@@ -79,8 +79,9 @@ func get_price() {
         ans.data = data
         ans.response = response
         ans.error = error
-        // DEBUG
+        #if DEBUG
         print(String(data: json_data, encoding: .utf8)!)
+        #endif
         DispatchQueue.main.async {
             display_data(err: err)
         }
@@ -90,12 +91,13 @@ func get_price() {
 ///
 
 /// Function for saving preferences from Defaults
-func save_prefs() {
-    defaults.set(25, forKey: "contract")
-    defaults.set(true, forKey: "delaySec")
-    defaults.set(CGFloat.pi, forKey: "pngUrl")
-    defaults.set("Paul Hudson", forKey: "name")
-    defaults.set(true, forKey: "autostart")
+func save_prefs(contract : String, delaySec : Double, pngUrl : String, ticker : String, autostart: Bool) {
+    defaults.set(contract, forKey: "contract")
+    defaults.set(delaySec, forKey: "delaySec")
+    //TODO поменять время таймера, поменять иконку
+    defaults.set(pngUrl, forKey: "pngUrl")
+    defaults.set(ticker, forKey: "ticker")
+    defaults.set(autostart, forKey: "autostart")
 }
 ///
 
@@ -107,8 +109,38 @@ func load_prefs() {
         prefs.delaySec = delaySecDefault
     }
     prefs.pngUrl = defaults.string(forKey: "pngUrl") ?? pngUrlDefault
-    prefs.ticker = defaults.string(forKey: "name") ?? nameDefault
+    prefs.ticker = defaults.string(forKey: "ticker") ?? nameDefault
     prefs.autostart = defaults.bool(forKey: "autostart")
+}
+///
+
+/// Function for checking fields from "Preferences"
+func check_data(contract : String, delaySec : String, pngUrl : String, ticker : String, autostart: Bool) -> (Bool, String) {
+    //TODO
+    
+    if (contract.count > 45 || contract.count < 40) {
+        //TODO проверка на контракт
+        return (true, "Contract error")
+    }
+    
+    do {
+        if (Double(delaySec)! < 30) {
+            return (true, "Delay in seconds error")}
+    }
+    //TODO catch
+    catch {
+        return (true, "Delay in seconds error")
+    }
+    
+    //TODO png
+    if (pngUrl == "1") {
+        return (true, "PNG Url error")
+    }
+    
+    if (ticker.count > 5) {
+        return (true, "Ticker error")
+    }
+    return (false, "OK")
 }
 ///
 
@@ -123,15 +155,18 @@ func display_data(err: Bool) {
            let data = statusesArray["data"] as? [String: Any],
            let price = data["price"] as? String {
             let _price_ = roundf((price as NSString).floatValue*pow(10, precisionRound))/pow(10, precisionRound)
-            
-            icon = NSImage(named: "orakuru")
+            // Building icon
+            icon = NSImage(named: prefs.pngUrl)
             icon?.size = NSSize(width: iconSize, height: iconSize)
             icon?.isTemplate = true
-            
+            //Building button
             statusItem?.button?.imagePosition = NSControl.ImagePosition.imageLeft
             statusItem?.button?.image = icon
             statusItem?.button?.title = " " + prefs.ticker + " $" + String(_price_)
         }
+    }
+    else {
+        statusItem?.button?.title = "Internet Error"
     }
 }
 ///
@@ -156,23 +191,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(NSMenuItem(title: "About", action: nil, keyEquivalent: "A"))
         menu.addItem(NSMenuItem(title: "Donate", action: nil, keyEquivalent: "D"))
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Quit", action: Selector("terminate:"), keyEquivalent: "q"))
+        menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.shared.terminate), keyEquivalent: "q"))
         // Building button
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         NSApp.setActivationPolicy(.accessory)
         statusItem?.button?.title = "Loading price"
         statusItem?.button?.font = NSFont.systemFont(ofSize: CGFloat(menuBarFontSize))
         statusItem?.menu = menu
+        load_prefs()
     }
     ///
 
-}
-///
-
-/// Function for checking fields from "Preferences"
-func check_data() -> (Bool, String) {
-    //TODO
-    return (true, "1")
 }
 ///
 

@@ -23,53 +23,49 @@ struct ContentView: View {
         
         Text("Contract Address:")
         
-        TextField("String", text: $contract, onCommit: {
-            print("commit")
-        })
+        TextField("String", text: $contract)
                     .textFieldStyle(.roundedBorder)
                     .textCase(.uppercase)
                     .padding(.horizontal)
+                    .disabled(true)
 
         Text("Ticker PNG Url:")
         
-        TextField("Url", text: $pngUrl, onCommit: {
-            
-        })
+        TextField("Url", text: $pngUrl)
                     .textFieldStyle(.roundedBorder)
                     .textCase(.uppercase)
                     .padding(.horizontal)
+                    .disabled(true)
         
         Text("Coin Ticker:")
         
-        TextField("Ticker", text: $ticker, onCommit: {
-            
-        })
+        TextField("Ticker", text: $ticker)
                     .textFieldStyle(.roundedBorder)
                     .textCase(.uppercase)
                     .padding(.horizontal)
+                    .disabled(true)
         
         Text("Delay in seconds:")
         
-        TextField("Secs", text: $delaySec, onCommit: {
-            
-        })
+        TextField("Secs", text: $delaySec)
                     .textFieldStyle(.roundedBorder)
                     .textCase(.uppercase)
                     .padding(.horizontal)
         
         Toggle(isOn: $autostart) {
                 Text("Start with system")
-            }
+        }
         
         Button("Save changes") {
-            let (answer, text) = check_data()
-            if (answer) {
-                
+            let (error, text) = check_data(contract: contract, delaySec: delaySec, pngUrl: pngUrl, ticker: ticker, autostart: autostart)
+            if (!error) {
+                save_prefs(contract: contract, delaySec: Double(delaySec)!, pngUrl: pngUrl, ticker: ticker, autostart: autostart)
             }
             else {
-                
+                message = text
+                print(message)
             }
-            print("Button tapped!")
+            
         }
     }
 }
