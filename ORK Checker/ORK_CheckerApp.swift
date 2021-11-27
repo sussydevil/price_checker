@@ -7,38 +7,39 @@
 import SwiftUI
 import AppKit
 
-// DEFAULT PREFERENCES
-//
+/// Magical values
+let menuBarFontSize = 13
+let iconSize = 16
+let precisionRound : Float = 3
+///
+
+
+/// DEFAULT PREFERENCES
 let API = "https://api.pancakeswap.info/api/v2/tokens/"
 let contractDefault = "0xCed0CE92F4bdC3c2201E255FAF12f05cf8206dA8"
 let delaySecDefault = 10.0
 let pngUrlDefault = "orakuru.png"
 let nameDefault = "ORK"
 let autostartDefault = true
-let isFirstLaunchDefault = false
-//
-// DEFAULT PREFERENCES
+let isFirstLaunchDefault = true
+/// DEFAULT PREFERENCES
 
-// GLOBAL OBJECTS
-//
+/// GLOBAL OBJECTS
 var statusItem: NSStatusItem?
 var statusBar : NSStatusBar?
 var timer : Timer?
-//
-// GLOBAL OBJECTS
+var icon : NSImage?
+/// GLOBAL OBJECTS
 
-// API ANSWER
-//
+/// API ANSWER
 struct Answer {
     var data: Data?
     var response: URLResponse?
     var error : Error?
 }
-//
-// API ANSWER
+/// API ANSWER
 
-// PREFERENCES
-//
+/// PREFERENCES
 struct Preferences {
     var contract : String
     var delaySec : Double
@@ -55,18 +56,18 @@ struct Preferences {
         self.isFirstLaunch = isFirstLaunchDefault
     }
 }
-//
-// PREFERENCES
+/// PREFERENCES
 
-// If no prefs found
+/// Default preferences
 var prefs = Preferences()
 
-// Answer struct init
+/// Answer struct init
 var ans = Answer()
 
-// Saved preferences
+/// Saved preferences
 var defaults = UserDefaults.standard
 
+/// Fuction for getting information through Pancakeswap API
 func get_price() {
     var err = false
     let url = URL(string: API + prefs.contract)!
@@ -85,9 +86,10 @@ func get_price() {
         }
     }
     task.resume()
-    
 }
+///
 
+/// Function for saving preferences from Defaults
 func save_prefs() {
     defaults.set(25, forKey: "contract")
     defaults.set(true, forKey: "delaySec")
@@ -95,7 +97,9 @@ func save_prefs() {
     defaults.set("Paul Hudson", forKey: "name")
     defaults.set(true, forKey: "autostart")
 }
+///
 
+/// Function for loading preferences from Defaults
 func load_prefs() {
     prefs.contract = defaults.string(forKey: "contract") ?? contractDefault
     let delaySec = defaults.double(forKey: "delaySec")
@@ -106,61 +110,73 @@ func load_prefs() {
     prefs.ticker = defaults.string(forKey: "name") ?? nameDefault
     prefs.autostart = defaults.bool(forKey: "autostart")
 }
+///
 
+/// Function for displaying data on menu bar
 func display_data(err: Bool) {
-    if (err == true) {
+    if (err) {
         statusItem?.button?.title = "Internet Error"
         return
     }
     if (ans.data != nil) {
         if let statusesArray = try? JSONSerialization.jsonObject(with: ans.data!, options: .allowFragments) as? [String: Any],
-            let data = statusesArray["data"] as? [String: Any],
-            let price = data["price"] as? String {
-                let _price_ = roundf((price as NSString).floatValue*1000)/1000
+           let data = statusesArray["data"] as? [String: Any],
+           let price = data["price"] as? String {
+            let _price_ = roundf((price as NSString).floatValue*pow(10, precisionRound))/pow(10, precisionRound)
             
-                let icon = NSImage(contentsOfFile: "/Users/quantum/Downloads/orakuru-logo-red.png")
+            icon = NSImage(named: "orakuru")
+            icon?.size = NSSize(width: iconSize, height: iconSize)
+            icon?.isTemplate = true
             
-                icon?.size = NSSize(width: 16, height: 16)
-                // Dark mode
-                icon?.isTemplate = true
-                statusItem?.button?.imagePosition = NSControl.ImagePosition.imageLeft
-                statusItem?.button?.image = icon
-                statusItem?.button?.title = " " + prefs.ticker + " $" + String(_price_)
-            
-                // Building menu
-                let menu = NSMenu()
-                menu.addItem(NSMenuItem(title: "Preferences", action: nil, keyEquivalent: "P"))
-                menu.addItem(NSMenuItem(title: "About", action: nil, keyEquivalent: "A"))
-                menu.addItem(NSMenuItem.separator())
-                menu.addItem(NSMenuItem(title: "Quit", action: Selector("terminate:"), keyEquivalent: "q"))
-                statusItem?.menu = menu
-                
-                }
+            statusItem?.button?.imagePosition = NSControl.ImagePosition.imageLeft
+            statusItem?.button?.image = icon
+            statusItem?.button?.title = " " + prefs.ticker + " $" + String(_price_)
+        }
     }
 }
+///
 
+/// Infinity loop function
 func infinity_loop(time: Double) {
     get_price()
     timer = Timer.scheduledTimer(withTimeInterval: time, repeats: true) { (t) in
         get_price()
     }
 }
+///
 
+/// Class AppDelegate
 class AppDelegate: NSObject, NSApplicationDelegate {
+    
+    /// Function when app did launching
     func applicationDidFinishLaunching(_ notification: Notification) {
-
+        // Building menu
+        let menu = NSMenu()
+        menu.addItem(NSMenuItem(title: "Preferences", action: nil, keyEquivalent: "P"))
+        menu.addItem(NSMenuItem(title: "About", action: nil, keyEquivalent: "A"))
+        menu.addItem(NSMenuItem(title: "Donate", action: nil, keyEquivalent: "D"))
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(NSMenuItem(title: "Quit", action: Selector("terminate:"), keyEquivalent: "q"))
+        // Building button
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         NSApp.setActivationPolicy(.accessory)
         statusItem?.button?.title = "Loading price"
-        statusItem?.button?.font = NSFont.systemFont(ofSize: 13)
+        statusItem?.button?.font = NSFont.systemFont(ofSize: CGFloat(menuBarFontSize))
+        statusItem?.menu = menu
     }
-}
+    ///
 
+}
+///
+
+/// Function for checking fields from "Preferences"
 func check_data() -> (Bool, String) {
-    
+    //TODO
     return (true, "1")
 }
+///
 
+/// Main function
 @main
 struct ORK_CheckerApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
@@ -171,3 +187,4 @@ struct ORK_CheckerApp: App {
     }
     let result: () = infinity_loop(time: prefs.delaySec)
 }
+///
