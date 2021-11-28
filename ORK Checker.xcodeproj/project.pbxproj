@@ -14,6 +14,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0E1A906B27541927004F7B01 /* ORK-Checker-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "ORK-Checker-Info.plist"; sourceTree = SOURCE_ROOT; };
 		0E738DF5274E979B00A5CC93 /* ORK Checker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ORK Checker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0E738DF8274E979B00A5CC93 /* ORK_CheckerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ORK_CheckerApp.swift; sourceTree = "<group>"; };
 		0E738DFA274E979B00A5CC93 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -52,6 +53,7 @@
 		0E738DF7274E979B00A5CC93 /* ORK Checker */ = {
 			isa = PBXGroup;
 			children = (
+				0E1A906B27541927004F7B01 /* ORK-Checker-Info.plist */,
 				0E738DF8274E979B00A5CC93 /* ORK_CheckerApp.swift */,
 				0E738DFA274E979B00A5CC93 /* ContentView.swift */,
 				0E738DFC274E979D00A5CC93 /* Assets.xcassets */,
@@ -277,6 +279,8 @@
 				DEVELOPMENT_ASSET_PATHS = "\"ORK Checker/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ORK-Checker-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = NO;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -303,6 +307,8 @@
 				DEVELOPMENT_ASSET_PATHS = "\"ORK Checker/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ORK-Checker-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = NO;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

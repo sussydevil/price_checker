@@ -11,6 +11,8 @@ import AppKit
 let menuBarFontSize = 13
 let iconSize = 16
 let precisionRound : Float = 3
+let minimumInterval : Float = 30
+let maximumInterval : Float = 3600
 /// MAGICAL VALUES
 
 
@@ -21,7 +23,6 @@ let delaySecDefault = 10.0
 let pngUrlDefault = "orakuru"
 let nameDefault = "ORK"
 let autostartDefault = true
-let isFirstLaunchDefault = true
 /// DEFAULT PREFERENCES
 
 /// GLOBAL OBJECTS
@@ -29,6 +30,7 @@ var statusItem: NSStatusItem?
 var statusBar : NSStatusBar?
 var timer : Timer?
 var icon : NSImage?
+var loadImage: NSImage?
 /// GLOBAL OBJECTS
 
 /// API ANSWER
@@ -46,14 +48,12 @@ struct Preferences {
     var pngUrl : String
     var ticker : String
     var autostart : Bool
-    var isFirstLaunch : Bool
     init() {
         self.contract = contractDefault
         self.delaySec = delaySecDefault
         self.pngUrl = pngUrlDefault
         self.ticker = nameDefault
         self.autostart = autostartDefault
-        self.isFirstLaunch = isFirstLaunchDefault
     }
 }
 /// PREFERENCES
@@ -116,30 +116,40 @@ func load_prefs() {
 
 /// Function for checking fields from "Preferences"
 func check_data(contract : String, delaySec : String, pngUrl : String, ticker : String, autostart: Bool) -> (Bool, String) {
-    //TODO
     
+    // Check contract address
     if (contract.count > 45 || contract.count < 40) {
-        //TODO проверка на контракт
         return (true, "Contract error")
     }
     
-    do {
-        if (Double(delaySec)! < 30) {
-            return (true, "Delay in seconds error")}
+    // Check delay
+    // ------------------------
+    let delay = Float(delaySec)
+    if (delay == nil) {
+        return (true, "Delay is not a number")
     }
-    //TODO catch
-    catch {
-        return (true, "Delay in seconds error")
+    if (delay! < minimumInterval) {
+        return (true, "Delay must be " + String(Int(minimumInterval)) + " seconds at least")
     }
+    if (delay! > maximumInterval) {
+        return (true, " Delay must be less than" + String(Int(maximumInterval)) + "seconds")
+    }
+    // ------------------------
+    //
     
-    //TODO png
+    // Check PNG
     if (pngUrl == "1") {
         return (true, "PNG Url error")
     }
     
+    // Check ticker
+    // ------------------------
     if (ticker.count > 5) {
         return (true, "Ticker error")
     }
+    // ------------------------
+    //
+    
     return (false, "OK")
 }
 ///
@@ -151,6 +161,7 @@ func display_data(err: Bool) {
         return
     }
     if (ans.data != nil) {
+        // Json serializing
         if let statusesArray = try? JSONSerialization.jsonObject(with: ans.data!, options: .allowFragments) as? [String: Any],
            let data = statusesArray["data"] as? [String: Any],
            let price = data["price"] as? String {
@@ -183,37 +194,77 @@ func infinity_loop(time: Double) {
 /// Class AppDelegate
 class AppDelegate: NSObject, NSApplicationDelegate {
     
+    // popover
+        var popover: NSPopover!
+    
     /// Function when app did launching
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Building menu
         let menu = NSMenu()
         menu.addItem(NSMenuItem(title: "Preferences", action: nil, keyEquivalent: "P"))
         menu.addItem(NSMenuItem(title: "About", action: nil, keyEquivalent: "A"))
-        menu.addItem(NSMenuItem(title: "Donate", action: nil, keyEquivalent: "D"))
         menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.shared.terminate), keyEquivalent: "q"))
         // Building button
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        NSApp.setActivationPolicy(.accessory)
         statusItem?.button?.title = "Loading price"
         statusItem?.button?.font = NSFont.systemFont(ofSize: CGFloat(menuBarFontSize))
         statusItem?.menu = menu
-        load_prefs()
+        
+        
+        
+        
+        
+        
+        // Create the SwiftUI view (i.e. the content).
+                let contentView = ContentView()
+
+                // Create the popover and sets ContentView as the rootView
+                let popover = NSPopover()
+                popover.contentSize = NSSize(width: 400, height: 500)
+                popover.behavior = .transient
+                popover.contentViewController = NSHostingController(rootView: contentView)
+                self.popover = popover
+                
+                
+                if let button = statusItem?.button {
+                    button.image = NSImage(named: "Icon")
+                    button.action = #selector(togglePopover(_:))
+                }
+        
     }
     ///
 
+    
+// Toggles popover
+@objc func togglePopover(_ sender: AnyObject?) {
+    if let button = statusItem?.button {
+        if self.popover.isShown {
+            self.popover.performClose(sender)
+        } else {
+            self.popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
+        }
+    }
+}
+    
 }
 ///
 
 /// Main function
 @main
 struct ORK_CheckerApp: App {
+    init() {
+        loadImage = NSImage(named: "orakuru_loading")
+        load_prefs()
+    }
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+            // IMPORTANT
+            Settings {
+                AnyView(erasing: ContentView())
+            }
         }
-    }
+    
     let result: () = infinity_loop(time: prefs.delaySec)
 }
 ///
