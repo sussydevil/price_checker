@@ -25,7 +25,6 @@ struct LoadView: View {
 }
 }
 */
-
 struct ContentView: View {
     // View variables
     //
@@ -66,7 +65,7 @@ struct ContentView: View {
                             .textFieldStyle(.roundedBorder)
                             .textCase(.uppercase)
                             .padding(.horizontal)
-                            .disabled(true)
+                            //.disabled(true)
             }
             
             Group {
@@ -103,7 +102,6 @@ struct ContentView: View {
                     let (error, text) = check_data(contract: contract, delaySec: delaySec, pngUrl: pngUrl, ticker: ticker, autostart: autostart)
                     if (!error) {
                         message = "All OK"
-                        
                         save_prefs(contract: contract, delaySec: Double(delaySec)!, pngUrl: pngUrl, ticker: ticker, autostart: autostart)
                     }
                     else {
@@ -115,7 +113,6 @@ struct ContentView: View {
                 
                 Text("\(message)")
             }
-            
         }.frame(width: 350, height: 400, alignment: Alignment.center)
         
             

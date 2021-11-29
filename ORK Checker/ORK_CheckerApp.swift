@@ -13,8 +13,10 @@ let iconSize = 16
 let precisionRound : Float = 3
 let minimumInterval : Float = 30
 let maximumInterval : Float = 3600
+let maximumTickerSymbol = 5
+let minimumContractSymbol = 40
+let maximumContractSymbol = 45
 /// MAGICAL VALUES
-
 
 /// DEFAULT PREFERENCES
 let API = "https://api.pancakeswap.info/api/v2/tokens/"
@@ -30,7 +32,6 @@ var statusItem: NSStatusItem?
 var statusBar : NSStatusBar?
 var timer : Timer?
 var icon : NSImage?
-var loadImage: NSImage?
 /// GLOBAL OBJECTS
 
 /// API ANSWER
@@ -118,7 +119,7 @@ func load_prefs() {
 func check_data(contract : String, delaySec : String, pngUrl : String, ticker : String, autostart: Bool) -> (Bool, String) {
     
     // Check contract address
-    if (contract.count > 45 || contract.count < 40) {
+    if (contract.count > maximumContractSymbol || contract.count < minimumContractSymbol) {
         return (true, "Contract error")
     }
     
@@ -144,7 +145,7 @@ func check_data(contract : String, delaySec : String, pngUrl : String, ticker : 
     
     // Check ticker
     // ------------------------
-    if (ticker.count > 5) {
+    if (ticker.count > maximumTickerSymbol) {
         return (true, "Ticker error")
     }
     // ------------------------
@@ -210,12 +211,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem?.button?.title = "Loading price"
         statusItem?.button?.font = NSFont.systemFont(ofSize: CGFloat(menuBarFontSize))
         statusItem?.menu = menu
-        
-        
-        
-        
-        
-        
+        /*
         // Create the SwiftUI view (i.e. the content).
                 let contentView = ContentView()
 
@@ -231,11 +227,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     button.image = NSImage(named: "Icon")
                     button.action = #selector(togglePopover(_:))
                 }
-        
+*/
     }
     ///
-
-    
+/*
 // Toggles popover
 @objc func togglePopover(_ sender: AnyObject?) {
     if let button = statusItem?.button {
@@ -246,7 +241,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 }
-    
+*/
 }
 ///
 
@@ -254,15 +249,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 @main
 struct ORK_CheckerApp: App {
     init() {
-        loadImage = NSImage(named: "orakuru_loading")
         load_prefs()
     }
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     var body: some Scene {
-            // IMPORTANT
-            Settings {
-                AnyView(erasing: ContentView())
-            }
+        Settings {
+            AnyView(erasing: ContentView())
+        }
+        }
+    
+    var body_1: some Scene {
+        WindowGroup {
+            ContentView()
+        }
         }
     
     let result: () = infinity_loop(time: prefs.delaySec)
