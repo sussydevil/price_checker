@@ -9,11 +9,8 @@ import AppKit
 
 /// MAGICAL VALUES
 let maximumInterval : Float = 3600
-let minimumInterval : Float = 30
-let minimumContractSymbol = 40
-let maximumContractSymbol = 45
+let minimumInterval : Float = 60
 let precisionRound : Float = 3
-let maximumTickerSymbol = 5
 let menuBarFontSize = 13
 let iconSize = 16
 /// MAGICAL VALUES
@@ -21,8 +18,8 @@ let iconSize = 16
 /// DEFAULT PREFERENCES
 let contractDefault = "0xCed0CE92F4bdC3c2201E255FAF12f05cf8206dA8"
 let API = "https://api.pancakeswap.info/api/v2/tokens/"
-let pngPathDefault = "orakuru"
-let delaySecDefault = 30.0
+let pngPathDefault = "ORK"
+let delaySecDefault = 60.0
 let autostartDefault = true
 let tickerDefault = "ORK"
 /// DEFAULT PREFERENCES
@@ -93,7 +90,6 @@ func get_price() {
 func save_prefs(contract : String, delaySec : Double, pngPath : String, ticker : String, autostart: Bool) {
     defaults.set(contract, forKey: "contract")
     defaults.set(delaySec, forKey: "delaySec")
-    //TODO поменять время таймера, поменять иконку
     defaults.set(pngPath, forKey: "pngPath")
     defaults.set(ticker, forKey: "ticker")
     defaults.set(autostart, forKey: "autostart")
@@ -102,17 +98,15 @@ func save_prefs(contract : String, delaySec : Double, pngPath : String, ticker :
     prefs.pngPath = pngPath
     prefs.ticker = ticker
     prefs.autostart = autostart
+    
+    // Change timer interval
+    timer?.invalidate()
+    infinity_timer(time: delaySec)
 }
 ///
 
 /// Function for checking fields from "Preferences" (not complete)
-func check_data(contract : String, delaySec : String, pngUrl : String, ticker : String, autostart: Bool) -> (Bool, String) {
-    
-    // Check contract address
-    // ------------------------
-    if (contract.count > maximumContractSymbol || contract.count < minimumContractSymbol) {
-        return (true, "Oops. Contract length error.")
-    }
+func check_data(delaySec : String) -> (Bool, String) {
     
     // Check delay
     // ------------------------
@@ -129,36 +123,24 @@ func check_data(contract : String, delaySec : String, pngUrl : String, ticker : 
     // ------------------------
     //
     
-    // Check PNG
-    // ------------------------
-    if (pngUrl == "1") {
-        return (true, "PNG Url error")
-    }
-    
-    // Check ticker
-    // ------------------------
-    if (ticker.count > maximumTickerSymbol) {
-        return (true, "Oops. Ticker must be less than 6 symbols.")
-    }
-    // ------------------------
-    //
-    
     return (false, "Data verified.")
 }
 ///
 
 /// Function for displaying data on menu bar
 func display_data(ans : Answer) {
+    // Getting data from Answer struct
     let statusCode = (ans.response as? HTTPURLResponse)?.statusCode ?? -1
-    //let error = ans.error
     let data = ans.data
+    let _ = ans.error
     if (statusCode != 200) {
         icon = NSImage(named: prefs.pngPath)
         icon?.size = NSSize(width: iconSize, height: iconSize)
-        icon?.isTemplate = true
+        //icon?.isTemplate = true -> Bad for solid icons
         statusItem?.button?.imagePosition = NSControl.ImagePosition.imageLeft
         statusItem?.button?.image = icon
         statusItem?.button?.title = " Pancake error"
+        return
     }
     if (data != nil) {
         // Json serializing
@@ -169,7 +151,7 @@ func display_data(ans : Answer) {
             // Building icon
             icon = NSImage(named: prefs.pngPath)
             icon?.size = NSSize(width: iconSize, height: iconSize)
-            icon?.isTemplate = true
+            //icon?.isTemplate = true -> Bad for solid icons
             //Building button
             statusItem?.button?.imagePosition = NSControl.ImagePosition.imageLeft
             statusItem?.button?.image = icon
@@ -180,7 +162,7 @@ func display_data(ans : Answer) {
 ///
 
 /// Infinity loop function
-func infinity_loop(time: Double) {
+func infinity_timer(time: Double) {
     get_price()
     timer = Timer.scheduledTimer(withTimeInterval: time, repeats: true) { (t) in
         get_price()
@@ -191,17 +173,16 @@ func infinity_loop(time: Double) {
 /// Class AppDelegate
 class AppDelegate: NSObject, NSApplicationDelegate {
     
-    // popover
     var popover: NSPopover!
     
     /// Function when app did launching
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Building button
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        statusItem?.button?.title = "Loading price"
         statusItem?.button?.font = NSFont.systemFont(ofSize: CGFloat(menuBarFontSize))
-        let contentView = ContentView()
+        statusItem?.button?.title = "Loading price"
         // Create the popover and sets ContentView as the rootView
+        let contentView = ContentView()
         let popover = NSPopover()
         popover.contentSize = NSSize(width: 400, height: 500)
         popover.behavior = .transient
@@ -211,7 +192,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     ///
     
-    /// Function for popup
+    /// Function for popover
     @objc func togglePopover(_ sender: AnyObject?) {
         if let button = statusItem?.button {
             if self.popover.isShown {
@@ -229,15 +210,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 /// Main function
 @main
 struct ORK_CheckerApp: App {
-    init() {
-        //load_prefs()
-    }
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     var body: some Scene {
         Settings {
             AnyView(erasing: ContentView())
         }
     }
-    let result: () = infinity_loop(time: prefs.delaySec)
+    let result: () = infinity_timer(time: prefs.delaySec)
 }
 ///
