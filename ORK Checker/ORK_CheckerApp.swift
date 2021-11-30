@@ -27,7 +27,6 @@ let tickerDefault = "ORK"
 
 /// GLOBAL OBJECTS
 var statusItem: NSStatusItem?
-var statusBar : NSStatusBar?
 var icon : NSImage?
 var timer : Timer?
 /// GLOBAL OBJECTS
@@ -132,7 +131,6 @@ func display_data(ans : Answer) {
     if (statusCode != 200) {
         icon = NSImage(named: prefs.pngPath)
         icon?.size = NSSize(width: iconSize, height: iconSize)
-        //icon?.isTemplate = true -> Bad for solid icons
         statusItem?.button?.imagePosition = NSControl.ImagePosition.imageLeft
         statusItem?.button?.image = icon
         statusItem?.button?.title = " Pancake error"
@@ -147,7 +145,6 @@ func display_data(ans : Answer) {
             // Building icon
             icon = NSImage(named: prefs.pngPath)
             icon?.size = NSSize(width: iconSize, height: iconSize)
-            //icon?.isTemplate = true -> Bad for solid icons
             //Building button
             statusItem?.button?.imagePosition = NSControl.ImagePosition.imageLeft
             statusItem?.button?.image = icon
@@ -185,8 +182,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         popover.contentViewController = NSHostingController(rootView: contentView)
         self.popover = popover
         statusItem?.button?.action = #selector(togglePopover(_:))
-        // Autostart
-        LaunchAtLogin.isEnabled = prefs.autostart
     }
     ///
     

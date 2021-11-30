@@ -42,7 +42,6 @@ struct ContentView: View {
             Picker("", selection: $selectedTicker) {
                                     ForEach(tickers, id: \.self) {Text($0)}
                                 }
-            .multilineTextAlignment(.center)
             .frame(width: 360, height: 20)
             .labelsHidden()
             .pickerStyle(SegmentedPickerStyle())
