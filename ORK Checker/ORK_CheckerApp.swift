@@ -6,6 +6,7 @@
 
 import SwiftUI
 import AppKit
+import LaunchAtLogin
 
 /// MAGICAL VALUES
 let maximumInterval : Float = 3600
@@ -20,7 +21,7 @@ let contractDefault = "0xCed0CE92F4bdC3c2201E255FAF12f05cf8206dA8"
 let API = "https://api.pancakeswap.info/api/v2/tokens/"
 let pngPathDefault = "ORK"
 let delaySecDefault = 60.0
-let autostartDefault = true
+let autostartDefault = false
 let tickerDefault = "ORK"
 /// DEFAULT PREFERENCES
 
@@ -98,18 +99,16 @@ func save_prefs(contract : String, delaySec : Double, pngPath : String, ticker :
     prefs.pngPath = pngPath
     prefs.ticker = ticker
     prefs.autostart = autostart
-    
     // Change timer interval
     timer?.invalidate()
     infinity_timer(time: delaySec)
+    // Autostart
+    LaunchAtLogin.isEnabled = autostart
 }
 ///
 
 /// Function for checking fields from "Preferences" (not complete)
 func check_data(delaySec : String) -> (Bool, String) {
-    
-    // Check delay
-    // ------------------------
     let delay = Float(delaySec)
     if (delay == nil) {
         return (true, "Oops. Entered delay is not a number.")
@@ -120,9 +119,6 @@ func check_data(delaySec : String) -> (Bool, String) {
     if (delay! > maximumInterval) {
         return (true, " Oops. Delay must be less than " + String(Int(maximumInterval)) + " seconds.")
     }
-    // ------------------------
-    //
-    
     return (false, "Data verified.")
 }
 ///
@@ -189,6 +185,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         popover.contentViewController = NSHostingController(rootView: contentView)
         self.popover = popover
         statusItem?.button?.action = #selector(togglePopover(_:))
+        // Autostart
+        LaunchAtLogin.isEnabled = prefs.autostart
     }
     ///
     

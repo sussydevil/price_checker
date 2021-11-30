@@ -6,75 +6,82 @@
 
 import SwiftUI
 
+struct ImageOverlay: View {
+    var body: some View {
+        Text("Samurai has no goal\nonly the way")
+            .font(.custom("Menlo", size: 16))
+            .frame(width: 300, height: 100)
+            .multilineTextAlignment(.center)
+            .lineSpacing(10)
+    }
+}
+
+
 struct ContentView: View {
     // View variables
     //
-    //@Environment(\.dismiss) var dismiss
-    @State public var delaySec = String(prefs.delaySec)
-    @State public var autostart = prefs.autostart
-    @State public var message = "Data is correct"
-    @State public var selectedContract = prefs.contract
+    @State private var delaySec = String(Int(prefs.delaySec))
+    @State private var autostart = prefs.autostart
+    @State private var message = "Data is correct"
+    @State private var selectedContract = prefs.contract
     @State private var selectedTicker = prefs.ticker
-    //@State private var selectedContract = prefs.contract
     let tickers = ["ORK", "MATE", "BTC", "ETH", "BNB"]
-    let addresses = ["0xced0ce92f4bdc3c2201e255faf12f05cf8206da8", "0x2198b69b36b86f250549d26d69c5957912a34ec2", "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c", "0x2170ed0880ac9a755fd29b2688956bd959f933f8", "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"]
+    let addresses =
+                   ["0xced0ce92f4bdc3c2201e255faf12f05cf8206da8", "0x2198b69b36b86f250549d26d69c5957912a34ec2", "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c", "0x2170ed0880ac9a755fd29b2688956bd959f933f8", "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"]
     //
     // View variables
     
     var body: some View {
-
         VStack {
+            
             Group {
                 Text("Coin Ticker Name:")
                     .frame(height: 20)
+                    .font(.custom("Menlo", size: 13))
             
             Picker("", selection: $selectedTicker) {
-                                    ForEach(tickers, id: \.self) {
-                                        Text($0)
-                                    }
+                                    ForEach(tickers, id: \.self) {Text($0)}
                                 }
-            .frame(width: 300, height: 20)
-            .onChange(of: selectedTicker) {newValue in
-                print("Ticker changed to \(selectedTicker)!")
-            }
+            .multilineTextAlignment(.center)
+            .frame(width: 360, height: 20)
+            .labelsHidden()
+            .pickerStyle(SegmentedPickerStyle())
             }
             
             Group {
                 Text("Contract Address:")
                             .frame(width: 300, height: 20)
+                            .font(.custom("Menlo", size: 13))
                             
-                TextField("String", text: $selectedContract)
+                TextField("", text: $selectedContract)
                             .textFieldStyle(.roundedBorder)
-                            .textCase(.uppercase)
                             .padding(.horizontal)
-                            .frame(width: 380, height: 20)
+                            .frame(width: 390, height: 25)
                             .disabled(true)
                             .onChange(of: selectedTicker) {newValue in
                                 let index = tickers.firstIndex(of: selectedTicker)
                                 selectedContract = addresses[index!]
                             }
-            }
+            }.multilineTextAlignment(.center)
     
             Group {
                 Text("Interval Between Requests:")
                     .frame(height: 20)
+                    .font(.custom("Menlo", size: 13))
                  
-                TextField("Seconds", text: $delaySec)
+                TextField(" 60 < Interval < 3600, in seconds", text: $delaySec)
                             .textFieldStyle(.roundedBorder)
-                            .textCase(.uppercase)
                             .padding(.horizontal)
-                            .frame(width: 380, height: 20)
+                            .frame(width: 390, height: 25)
             }
+            .multilineTextAlignment(.center)
             
             Group {
                 Toggle(isOn: $autostart) {
                         Text("Start With System")
                 }
-                .frame(height: 20)
-                
-                Text("\(message)")
-                    .frame(width: 350, height: 40)
-                    .border(Color.gray)
+                .frame(height: 22)
+                .font(.custom("Menlo", size: 13))
                 
                 HStack {
                     
@@ -86,18 +93,31 @@ struct ContentView: View {
                         }
                         else {
                             message = text
+                            delaySec = ""
                         }
                     }
                     .padding()
-                    .frame(width: 150, height: 20)
-                    
-                    Button (" Exit                ") {
+                    .frame(width: 150, height: 30)
+                    .font(.custom("Menlo", size: 12))
+                 
+                    Button ("Exit widget ") {
                         exit(0)
                     }
-                    .frame(width: 150, height: 20)
+                    .frame(width: 150, height: 30)
+                    .font(.custom("Menlo", size: 12))
+                    
                 }
+                .padding(.bottom, 8)
+                
+                Image("doge_img")
+                    .resizable()
+                    .frame(width: 330, height: 330, alignment: Alignment.center)
+                    .opacity(0.65)
+                    .cornerRadius(10)
+                    .blur(radius: 2)
+                    .overlay(ImageOverlay(), alignment: .center)
             }
-        }.frame(width: 380, height: 300, alignment: Alignment.center)
+        }.frame(width: 380, height: 620, alignment: Alignment.center)
     }
 }
 
