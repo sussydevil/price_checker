@@ -8,23 +8,6 @@ import SwiftUI
 import AppKit
 import LaunchAtLogin
 
-/// MAGICAL VALUES
-let maximumInterval : Float = 3600
-let minimumInterval : Float = 60
-let precisionRound : Float = 3
-let menuBarFontSize = 13
-let iconSize = 16
-/// MAGICAL VALUES
-
-/// DEFAULT PREFERENCES
-let contractDefault = "0xCed0CE92F4bdC3c2201E255FAF12f05cf8206dA8"
-let API = "https://api.pancakeswap.info/api/v2/tokens/"
-let pngPathDefault = "ORK"
-let delaySecDefault = 60.0
-let autostartDefault = false
-let tickerDefault = "ORK"
-/// DEFAULT PREFERENCES
-
 /// GLOBAL OBJECTS
 var statusItem: NSStatusItem?
 var icon : NSImage?
@@ -47,16 +30,16 @@ struct Preferences {
     var ticker : String
     var autostart : Bool
     init() {
-        self.contract = defaults.string(forKey: "contract") ?? contractDefault
+        self.contract = defaults.string(forKey: "contract") ?? Prefs.Default.contract
         let delaySec = defaults.double(forKey: "delaySec")
         if (delaySec == 0) {
-            self.delaySec = delaySecDefault
+            self.delaySec = Prefs.Default.delaySec
         }
         else {
             self.delaySec = delaySec
         }
-        self.pngPath = defaults.string(forKey: "pngPath") ?? pngPathDefault
-        self.ticker = defaults.string(forKey: "ticker") ?? tickerDefault
+        self.pngPath = defaults.string(forKey: "pngPath") ?? Prefs.Default.pngPath
+        self.ticker = defaults.string(forKey: "ticker") ?? Prefs.Default.ticker
         self.autostart = defaults.bool(forKey: "autostart")
     }
 }
@@ -72,7 +55,7 @@ var defaults = UserDefaults.standard
 func get_price() {
     // Answer struct init
     var ans = Answer()
-    let url = URL(string: API + prefs.contract)!
+    let url = URL(string: Prefs.Immutable.apiString + prefs.contract)!
     let task = URLSession.shared.dataTask(with: url) {(data, response, error) in
         guard let _ = data else {return}
         ans.data = data
@@ -112,11 +95,11 @@ func check_data(delaySec : String) -> (Bool, String) {
     if (delay == nil) {
         return (true, "Oops. Entered delay is not a number.")
     }
-    if (delay! < minimumInterval) {
-        return (true, "Oops. Delay must be " + String(Int(minimumInterval)) + " seconds at least.")
+    if (delay! < Prefs.Immutable.minimumInterval) {
+        return (true, "Oops. Delay must be " + String(Int(Prefs.Immutable.minimumInterval)) + " seconds at least.")
     }
-    if (delay! > maximumInterval) {
-        return (true, " Oops. Delay must be less than " + String(Int(maximumInterval)) + " seconds.")
+    if (delay! > Prefs.Immutable.maximumInterval) {
+        return (true, " Oops. Delay must be less than " + String(Int(Prefs.Immutable.maximumInterval)) + " seconds.")
     }
     return (false, "Data verified.")
 }
@@ -130,7 +113,7 @@ func display_data(ans : Answer) {
     let _ = ans.error
     if (statusCode != 200) {
         icon = NSImage(named: prefs.pngPath)
-        icon?.size = NSSize(width: iconSize, height: iconSize)
+        icon?.size = NSSize(width: Prefs.Immutable.iconSize, height: Prefs.Immutable.iconSize)
         statusItem?.button?.imagePosition = NSControl.ImagePosition.imageLeft
         statusItem?.button?.image = icon
         statusItem?.button?.title = " Pancake error"
@@ -141,10 +124,10 @@ func display_data(ans : Answer) {
         if let statusesArray = try? JSONSerialization.jsonObject(with: ans.data!, options: .allowFragments) as? [String: Any],
            let data = statusesArray["data"] as? [String: Any],
            let price = data["price"] as? String {
-            let _price_ = roundf((price as NSString).floatValue*pow(10, precisionRound))/pow(10, precisionRound)
+            let _price_ = roundf((price as NSString).floatValue*pow(10, Prefs.Default.precisionRound))/pow(10, Prefs.Default.precisionRound)
             // Building icon
             icon = NSImage(named: prefs.pngPath)
-            icon?.size = NSSize(width: iconSize, height: iconSize)
+            icon?.size = NSSize(width: Prefs.Immutable.iconSize, height: Prefs.Immutable.iconSize)
             //Building button
             statusItem?.button?.imagePosition = NSControl.ImagePosition.imageLeft
             statusItem?.button?.image = icon
@@ -172,7 +155,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Building button
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        statusItem?.button?.font = NSFont.systemFont(ofSize: CGFloat(menuBarFontSize))
+        statusItem?.button?.font = NSFont.systemFont(ofSize: CGFloat(Prefs.Immutable.menuBarFontSize))
         statusItem?.button?.title = "Loading price"
         // Create the popover and sets ContentView as the rootView
         let contentView = ContentView()

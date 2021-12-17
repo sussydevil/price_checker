@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0E26ABBB2756813700DE279E /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 0E26ABBA2756813700DE279E /* LaunchAtLogin */; };
+		0E1F89F1276CCEA800FC7C77 /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 0E1F89F0276CCEA800FC7C77 /* LaunchAtLogin */; };
 		0E738DF9274E979B00A5CC93 /* ORK_CheckerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E738DF8274E979B00A5CC93 /* ORK_CheckerApp.swift */; };
 		0E738DFB274E979B00A5CC93 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E738DFA274E979B00A5CC93 /* ContentView.swift */; };
 		0E738DFD274E979D00A5CC93 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0E738DFC274E979D00A5CC93 /* Assets.xcassets */; };
@@ -17,6 +17,7 @@
 
 /* Begin PBXFileReference section */
 		0E1A906B27541927004F7B01 /* ORK-Checker-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "ORK-Checker-Info.plist"; sourceTree = SOURCE_ROOT; };
+		0E400B13276CB70B00C88941 /* LaunchAtLogin-main */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "LaunchAtLogin-main"; path = "../../../../Desktop/LaunchAtLogin-main"; sourceTree = "<group>"; };
 		0E738DF5274E979B00A5CC93 /* ORK Checker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ORK Checker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0E738DF8274E979B00A5CC93 /* ORK_CheckerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ORK_CheckerApp.swift; sourceTree = "<group>"; };
 		0E738DFA274E979B00A5CC93 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -31,16 +32,25 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0E26ABBB2756813700DE279E /* LaunchAtLogin in Frameworks */,
+				0E1F89F1276CCEA800FC7C77 /* LaunchAtLogin in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0E400B12276CB70B00C88941 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				0E400B13276CB70B00C88941 /* LaunchAtLogin-main */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
 		0E738DEC274E979B00A5CC93 = {
 			isa = PBXGroup;
 			children = (
+				0E400B12276CB70B00C88941 /* Packages */,
 				0E738DF7274E979B00A5CC93 /* ORK Checker */,
 				0E738DF6274E979B00A5CC93 /* Products */,
 			);
@@ -59,11 +69,11 @@
 			children = (
 				0E1A906B27541927004F7B01 /* ORK-Checker-Info.plist */,
 				0E738DF8274E979B00A5CC93 /* ORK_CheckerApp.swift */,
+				0EC937D9275F6ED80038604F /* Data.swift */,
 				0E738DFA274E979B00A5CC93 /* ContentView.swift */,
 				0E738DFC274E979D00A5CC93 /* Assets.xcassets */,
 				0E738E01274E979D00A5CC93 /* ORK_Checker.entitlements */,
 				0E738DFE274E979D00A5CC93 /* Preview Content */,
-				0EC937D9275F6ED80038604F /* Data.swift */,
 			);
 			path = "ORK Checker";
 			sourceTree = "<group>";
@@ -94,7 +104,7 @@
 			);
 			name = "ORK Checker";
 			packageProductDependencies = (
-				0E26ABBA2756813700DE279E /* LaunchAtLogin */,
+				0E1F89F0276CCEA800FC7C77 /* LaunchAtLogin */,
 			);
 			productName = "ORK Checker";
 			productReference = 0E738DF5274E979B00A5CC93 /* ORK Checker.app */;
@@ -125,7 +135,7 @@
 			);
 			mainGroup = 0E738DEC274E979B00A5CC93;
 			packageReferences = (
-				0E26ABB92756813700DE279E /* XCRemoteSwiftPackageReference "LaunchAtLogin" */,
+				0E1F89EF276CCEA800FC7C77 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */,
 			);
 			productRefGroup = 0E738DF6274E979B00A5CC93 /* Products */;
 			projectDirPath = "";
@@ -186,6 +196,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -248,6 +259,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -389,20 +401,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		0E26ABB92756813700DE279E /* XCRemoteSwiftPackageReference "LaunchAtLogin" */ = {
+		0E1F89EF276CCEA800FC7C77 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/LaunchAtLogin.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.0.0;
+				branch = main;
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		0E26ABBA2756813700DE279E /* LaunchAtLogin */ = {
+		0E1F89F0276CCEA800FC7C77 /* LaunchAtLogin */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0E26ABB92756813700DE279E /* XCRemoteSwiftPackageReference "LaunchAtLogin" */;
+			package = 0E1F89EF276CCEA800FC7C77 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */;
 			productName = LaunchAtLogin;
 		};
 /* End XCSwiftPackageProductDependency section */
