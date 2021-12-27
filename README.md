@@ -10,4 +10,5 @@ Interface looks like this:
 </p>
 
 You can build it yourself or download binary .dmg package from Release.
+
 Enjoy!
