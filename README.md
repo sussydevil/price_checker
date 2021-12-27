@@ -6,7 +6,7 @@ Interface looks like this:
 
 
 <p align="center">
-  <img src="https://github.com/sussydevil/price_checker/blob/main/ORK Checker/Preview Content/Preview Assets.xcassets/app.imageset/app.png" width="350">
+  <img src="https://github.com/sussydevil/price_checker/blob/main/ORK Checker/Preview Content/Preview Assets.xcassets/app.imageset/app.png" width="700">
 </p>
 
 You can build it yourself or download binary .dmg package from Release.
