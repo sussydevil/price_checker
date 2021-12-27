@@ -18,6 +18,7 @@
 /* Begin PBXFileReference section */
 		0E1A906B27541927004F7B01 /* ORK-Checker-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "ORK-Checker-Info.plist"; sourceTree = SOURCE_ROOT; };
 		0E400B13276CB70B00C88941 /* LaunchAtLogin-main */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "LaunchAtLogin-main"; path = "../../../../Desktop/LaunchAtLogin-main"; sourceTree = "<group>"; };
+		0E5E1357277A11FC00BECC84 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		0E738DF5274E979B00A5CC93 /* ORK Checker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ORK Checker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0E738DF8274E979B00A5CC93 /* ORK_CheckerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ORK_CheckerApp.swift; sourceTree = "<group>"; };
 		0E738DFA274E979B00A5CC93 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -50,6 +51,7 @@
 		0E738DEC274E979B00A5CC93 = {
 			isa = PBXGroup;
 			children = (
+				0E5E1357277A11FC00BECC84 /* README.md */,
 				0E400B12276CB70B00C88941 /* Packages */,
 				0E738DF7274E979B00A5CC93 /* ORK Checker */,
 				0E738DF6274E979B00A5CC93 /* Products */,
