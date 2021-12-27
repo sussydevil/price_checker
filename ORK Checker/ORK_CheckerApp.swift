@@ -29,6 +29,7 @@ struct Preferences {
     var pngPath : String
     var ticker : String
     var autostart : Bool
+    var precisionRound: Float
     init() {
         self.contract = defaults.string(forKey: "contract") ?? Prefs.Default.contract
         let delaySec = defaults.double(forKey: "delaySec")
@@ -41,6 +42,14 @@ struct Preferences {
         self.pngPath = defaults.string(forKey: "pngPath") ?? Prefs.Default.pngPath
         self.ticker = defaults.string(forKey: "ticker") ?? Prefs.Default.ticker
         self.autostart = defaults.bool(forKey: "autostart")
+        let precisionRound = defaults.float(forKey: "precisionRound")
+        if (precisionRound == 0)
+        {
+            self.precisionRound = Prefs.Default.precisionRound
+        }
+        else {
+            self.precisionRound = precisionRound
+        }
     }
 }
 /// PREFERENCES
@@ -76,6 +85,7 @@ func save_prefs(contract : String, delaySec : Double, pngPath : String, ticker :
     defaults.set(pngPath, forKey: "pngPath")
     defaults.set(ticker, forKey: "ticker")
     defaults.set(autostart, forKey: "autostart")
+    //TODO save precisionRound
     prefs.contract = contract
     prefs.delaySec = delaySec
     prefs.pngPath = pngPath

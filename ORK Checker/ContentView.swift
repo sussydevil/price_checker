@@ -25,6 +25,7 @@ struct ContentView: View {
     @State private var message = "Data is correct"
     @State private var selectedContract = prefs.contract
     @State private var selectedTicker = prefs.ticker
+    //TODO get from data not from here
     let tickers = ["ORK", "MATE", "BTC", "ETH", "BNB"]
     let addresses =
                    ["0xced0ce92f4bdc3c2201e255faf12f05cf8206da8", "0x2198b69b36b86f250549d26d69c5957912a34ec2", "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c", "0x2170ed0880ac9a755fd29b2688956bd959f933f8", "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"]
@@ -40,8 +41,8 @@ struct ContentView: View {
                     .font(.custom("Menlo", size: 13))
             
             Picker("", selection: $selectedTicker) {
-                                    ForEach(tickers, id: \.self) {Text($0)}
-                                }
+                    ForEach(tickers, id: \.self) {Text($0)}
+                    }
             .frame(width: 360, height: 20)
             .labelsHidden()
             .pickerStyle(SegmentedPickerStyle())
