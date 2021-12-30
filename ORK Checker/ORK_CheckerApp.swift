@@ -42,6 +42,7 @@ struct Preferences {
         self.pngPath = defaults.string(forKey: "pngPath") ?? Prefs.Default.pngPath
         self.ticker = defaults.string(forKey: "ticker") ?? Prefs.Default.ticker
         self.autostart = defaults.bool(forKey: "autostart")
+        // not changed
         self.precisionRound = Prefs.Default.precisionRound
     }
 }

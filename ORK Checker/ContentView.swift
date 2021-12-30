@@ -25,28 +25,42 @@ struct ContentView: View {
     @State private var autostart = prefs.autostart
     @State private var selectedTicker = prefs.ticker
     @State private var selectedPngUrl = prefs.pngPath
-    //TODO get from data not from here
-    var tickers = ["ORK", "MATE", "BTC", "ETH", "BNB"]
-    var addresses =
-                   ["0xced0ce92f4bdc3c2201e255faf12f05cf8206da8", "0x2198b69b36b86f250549d26d69c5957912a34ec2", "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c", "0x2170ed0880ac9a755fd29b2688956bd959f933f8", "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"]
-    var pngUrls = [""]
+    
+    // data arrays
+    var tickers = [String]()
+    var addresses = [String]()
+    var pngUrls = [String]()
+    
+    init() {
+        for coin in Prefs.Immutable.coinData
+        {
+            tickers.append(coin[0])
+            addresses.append(coin[1])
+            pngUrls.append(coin[2])
+        }
+    }
     //
     // View variables
     
     var body: some View {
+        /// VStack starts
         VStack {
-            
             Group {
                 Text("Coin Ticker Name:")
                     .frame(height: 20)
                     .font(.custom("Menlo", size: 13))
-            
-            Picker("", selection: $selectedTicker) {
-                ForEach(tickers, id: \.self) {Text($0)}
-                    }
-            .frame(width: 360, height: 20)
-            .labelsHidden()
-            .pickerStyle(SegmentedPickerStyle())
+                
+                Picker("", selection: $selectedTicker) {
+                    ForEach(tickers, id: \.self) {Text($0)}
+                        }
+                .frame(width: 360, height: 20)
+                .labelsHidden()
+                .pickerStyle(SegmentedPickerStyle())
+                .onChange(of: selectedTicker) {newValue in
+                    let index = tickers.firstIndex(of: selectedTicker)
+                    selectedContract = addresses[index!]
+                    selectedPngUrl = pngUrls[index!]
+                }
             }
             
             Group {
@@ -59,10 +73,6 @@ struct ContentView: View {
                             .padding(.horizontal)
                             .frame(width: 390, height: 25)
                             .disabled(true)
-                            .onChange(of: selectedTicker) {newValue in
-                                let index = tickers.firstIndex(of: selectedTicker)
-                                selectedContract = addresses[index!]
-                            }
             }.multilineTextAlignment(.center)
     
             Group {
@@ -84,11 +94,11 @@ struct ContentView: View {
                 .frame(height: 22)
                 .font(.custom("Menlo", size: 13))
                 
+                /// HStack starts
                 HStack {
-                    
                     Button("Save changes") {
                         if (!check_data(delaySec: delaySec)) {
-                            save_prefs(contract: selectedContract, delaySec: Double(delaySec)!, pngPath: selectedTicker, ticker: selectedTicker, autostart: autostart)
+                            save_prefs(contract: selectedContract, delaySec: Double(delaySec)!, pngPath: selectedPngUrl, ticker: selectedTicker, autostart: autostart)
                         }
                         else {
                             delaySec = ""
@@ -103,9 +113,9 @@ struct ContentView: View {
                     }
                     .frame(width: 150, height: 30)
                     .font(.custom("Menlo", size: 12))
-                    
                 }
                 .padding(.bottom, 8)
+                /// HStack ends
                 
                 Image("poster")
                     .resizable()
@@ -116,6 +126,7 @@ struct ContentView: View {
                     .overlay(ImageOverlay(), alignment: .center)
             }
         }.frame(width: 380, height: 620, alignment: Alignment.center)
+        /// VStack ends
     }
 }
 
