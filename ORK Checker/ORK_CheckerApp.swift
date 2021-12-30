@@ -42,14 +42,7 @@ struct Preferences {
         self.pngPath = defaults.string(forKey: "pngPath") ?? Prefs.Default.pngPath
         self.ticker = defaults.string(forKey: "ticker") ?? Prefs.Default.ticker
         self.autostart = defaults.bool(forKey: "autostart")
-        let precisionRound = defaults.float(forKey: "precisionRound")
-        if (precisionRound == 0)
-        {
-            self.precisionRound = Prefs.Default.precisionRound
-        }
-        else {
-            self.precisionRound = precisionRound
-        }
+        self.precisionRound = Prefs.Default.precisionRound
     }
 }
 /// PREFERENCES
@@ -85,14 +78,13 @@ func save_prefs(contract : String, delaySec : Double, pngPath : String, ticker :
     defaults.set(pngPath, forKey: "pngPath")
     defaults.set(ticker, forKey: "ticker")
     defaults.set(autostart, forKey: "autostart")
-    //TODO save precisionRound
     prefs.contract = contract
     prefs.delaySec = delaySec
     prefs.pngPath = pngPath
     prefs.ticker = ticker
     prefs.autostart = autostart
     // Change timer interval
-    timer?.invalidate()
+    timer!.invalidate()
     infinity_timer(time: delaySec)
     // Autostart
     LaunchAtLogin.isEnabled = autostart
@@ -100,18 +92,18 @@ func save_prefs(contract : String, delaySec : Double, pngPath : String, ticker :
 ///
 
 /// Function for checking fields from "Preferences" (not complete)
-func check_data(delaySec : String) -> (Bool, String) {
+func check_data(delaySec : String) -> Bool {
     let delay = Float(delaySec)
     if (delay == nil) {
-        return (true, "Oops. Entered delay is not a number.")
+        return true
     }
     if (delay! < Prefs.Immutable.minimumInterval) {
-        return (true, "Oops. Delay must be " + String(Int(Prefs.Immutable.minimumInterval)) + " seconds at least.")
+        return true
     }
     if (delay! > Prefs.Immutable.maximumInterval) {
-        return (true, " Oops. Delay must be less than " + String(Int(Prefs.Immutable.maximumInterval)) + " seconds.")
+        return true
     }
-    return (false, "Data verified.")
+    return false
 }
 ///
 

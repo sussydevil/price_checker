@@ -20,15 +20,16 @@ struct ImageOverlay: View {
 struct ContentView: View {
     // View variables
     //
-    @State private var delaySec = String(Int(prefs.delaySec))
-    @State private var autostart = prefs.autostart
-    @State private var message = "Data is correct"
     @State private var selectedContract = prefs.contract
+    @State private var delaySec = String(prefs.delaySec)
+    @State private var autostart = prefs.autostart
     @State private var selectedTicker = prefs.ticker
+    @State private var selectedPngUrl = prefs.pngPath
     //TODO get from data not from here
-    let tickers = ["ORK", "MATE", "BTC", "ETH", "BNB"]
-    let addresses =
+    var tickers = ["ORK", "MATE", "BTC", "ETH", "BNB"]
+    var addresses =
                    ["0xced0ce92f4bdc3c2201e255faf12f05cf8206da8", "0x2198b69b36b86f250549d26d69c5957912a34ec2", "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c", "0x2170ed0880ac9a755fd29b2688956bd959f933f8", "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"]
+    var pngUrls = [""]
     //
     // View variables
     
@@ -41,7 +42,7 @@ struct ContentView: View {
                     .font(.custom("Menlo", size: 13))
             
             Picker("", selection: $selectedTicker) {
-                    ForEach(tickers, id: \.self) {Text($0)}
+                ForEach(tickers, id: \.self) {Text($0)}
                     }
             .frame(width: 360, height: 20)
             .labelsHidden()
@@ -86,13 +87,10 @@ struct ContentView: View {
                 HStack {
                     
                     Button("Save changes") {
-                        let (error, text) = check_data(delaySec: delaySec)
-                        if (!error) {
-                            message = "Data is correct"
+                        if (!check_data(delaySec: delaySec)) {
                             save_prefs(contract: selectedContract, delaySec: Double(delaySec)!, pngPath: selectedTicker, ticker: selectedTicker, autostart: autostart)
                         }
                         else {
-                            message = text
                             delaySec = ""
                         }
                     }
@@ -109,7 +107,7 @@ struct ContentView: View {
                 }
                 .padding(.bottom, 8)
                 
-                Image("doge_img")
+                Image("poster")
                     .resizable()
                     .frame(width: 330, height: 330, alignment: Alignment.center)
                     .opacity(0.65)
